@@ -1,0 +1,12 @@
+{
+  "name": "flyio-dash-app",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",  // oder dein gewünschtes Base-Image
+
+  "containerEnv": {
+    "FLY_API_TOKEN": "${secrets.FLY_API_TOKEN}"
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  }
+}
