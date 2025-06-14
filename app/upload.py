@@ -7,6 +7,7 @@ import io
 import psycopg2
 from flask import session
 import dash
+from config import DATABASE_URL
 
 from app.db import get_current_user_id, get_db_connection
 from app.utils.csv_format_mappings import csv_format_registry

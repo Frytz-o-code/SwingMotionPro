@@ -9,4 +9,4 @@ else
   echo "uv wird installiert..."
   curl -Ls https://astral.sh/uv/install.sh | bash
   echo "uv wurde installiert."
-fi ^ 
+fi

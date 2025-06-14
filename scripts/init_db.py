@@ -2,6 +2,7 @@
 
 import os
 import psycopg2
+import sys
 
 SCHEMA_SQL_PATH = os.path.join(os.path.dirname(__file__), "..", "schema", "schema.sql")
 
@@ -10,6 +11,11 @@ def load_schema():
         return f.read()
 
 def init_db():
+    env = os.environ.get("ENV", "production")
+    if env != "development":
+        print("❌ Initialisierung nur in Development-Umgebung erlaubt. Aktuelle ENV:", env)
+        sys.exit(1)
+
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"])
         cur = conn.cursor()
