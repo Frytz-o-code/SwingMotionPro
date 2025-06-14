@@ -1,44 +1,34 @@
--- Nutzer
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email TEXT UNIQUE NOT NULL,
+-- schema/schema.sql
+
+-- Erweiterung für UUID & Zeit
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Users mit Rolle
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('admin', 'coach', 'player')),
     created_at TIMESTAMPTZ DEFAULT now()
 );
+-- Beispiel-Admin-Nutzer (Passwort: "admin123", gehasht mit bcrypt)
+INSERT INTO users (email, password_hash, role)
+VALUES (
+  'admin@example.com',
+  '$2b$12$Tn9s7ZCHN0YKORqvMoKj8eL3DJ3Ik9kDkJht4ElWZ.cDKM0yLGSKK', -- "admin123"
+  'admin'
+)
+ON CONFLICT DO NOTHING;
 
--- Sessions = z. B. Trainings- oder Spieltage
-CREATE TABLE golf_sessions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+-- Golf Sessions
+CREATE TABLE IF NOT EXISTS golf_shots (
+    id SERIAL PRIMARY KEY,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    session_date DATE NOT NULL,
-    notes TEXT,
-    created_at TIMESTAMPTZ DEFAULT now()
-);
-
--- Schläge innerhalb einer Session
-CREATE TABLE shots (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    session_id UUID REFERENCES golf_sessions(id) ON DELETE CASCADE,
-    club TEXT NOT NULL,                -- z. B. "Driver", "7 Iron"
-    carry_m REAL,
-    deviation_deg REAL,
-    spin_rpm INTEGER,
-    smash_factor REAL,
-    impact_quality TEXT,              -- "good", "miss", "toe", "heel"...
-    created_at TIMESTAMPTZ DEFAULT now()
-);
-
--- Scorecard (optional erweiterbar mit Front9/Back9)
-CREATE TABLE scorecards (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id),
-    round_date DATE,
-    course_name TEXT,
-    holes_played INTEGER,
-    strokes_total INTEGER,
-    fairways_hit INTEGER,
-    greens_in_reg INTEGER,
-    putts_total INTEGER,
-    created_at TIMESTAMPTZ DEFAULT now()
+    datum TIMESTAMP,
+    schlaegerart TEXT,
+    smash_factor DOUBLE PRECISION,
+    carry_distanz DOUBLE PRECISION,
+    gesamtstrecke DOUBLE PRECISION,
+    ballgeschwindigkeit DOUBLE PRECISION,
+    created_at TIMESTAMP DEFAULT now()
 );

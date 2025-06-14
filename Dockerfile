@@ -7,4 +7,4 @@ COPY . .
 
 RUN uv pip install --system .
 
-CMD ["gunicorn", "app:server", "--bind", "0.0.0.0:8080"]
+CMD ["gunicorn", "app.app:server", "--bind", "0.0.0.0:8080"]

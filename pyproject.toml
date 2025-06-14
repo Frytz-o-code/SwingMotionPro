@@ -11,4 +11,8 @@ dependencies = [
     "psycopg2-binary",
     "flask-login",
     "pandas",
+    "flask-session>=0.8.0",
+    "dash-mantine-components>=2.0.0",
+    "dash-iconify>=0.1.2",
+    "bcrypt>=4.3.0",
 ]
