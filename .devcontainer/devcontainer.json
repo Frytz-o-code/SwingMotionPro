@@ -1,7 +1,7 @@
 {
   "name": "flyio-dash-app",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",  // oder dein gewünschtes Base-Image
-
+  "postCreateCommand": "bash .devcontainer/install-flyctl.sh",
   "containerEnv": {
     "FLY_API_TOKEN": "${secrets.FLY_API_TOKEN}"
   },
