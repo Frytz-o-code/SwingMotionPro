@@ -1,0 +1,14 @@
+[project]
+name = "swingmotionpro"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dash",
+    "gunicorn",
+    "flask",
+    "psycopg2-binary",
+    "flask-login",
+    "pandas",
+]

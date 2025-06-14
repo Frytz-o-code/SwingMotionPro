@@ -1,0 +1,18 @@
+#!/bin/bash
+
+APP_NAME="swingmotionpro"
+
+echo "📦 Hole Machine-IDs für App '$APP_NAME'..."
+MACHINE_IDS=$(flyctl machines list -a "$APP_NAME" --json | jq -r '.[].id')
+
+if [ -z "$MACHINE_IDS" ]; then
+    echo "⚠️  Keine Machines gefunden für App '$APP_NAME'"
+    exit 1
+fi
+
+for ID in $MACHINE_IDS; do
+    echo "🔁 Starte Machine $ID neu..."
+    flyctl machines restart "$ID" -a "$APP_NAME"
+done
+
+echo "✅ Alle Maschinen wurden neu gestartet."

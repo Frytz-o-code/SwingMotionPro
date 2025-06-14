@@ -1,0 +1,22 @@
+# fly.toml app configuration file generated for swingmotionpro on 2025-06-12
+#
+# Weitere Infos zur Konfiguration: https://fly.io/docs/reference/configuration/
+
+app = "swingmotionpro"
+primary_region = "fra"  # Frankfurt → nächstgelegene Region zu Wien
+
+[build]
+# Wenn du ein Dockerfile verwendest, kannst du diesen Block leer lassen
+
+[http_service]
+  internal_port = 8080                # Muss zu Gunicorn-Port passen (z. B. 8080)
+  force_https = true                  # HTTP automatisch auf HTTPS umleiten
+  auto_stop_machines = "stop"         # Bei Inaktivität automatisch pausieren
+  auto_start_machines = true          # Bei neuer Anfrage automatisch starten
+  min_machines_running = 0            # Spart Ressourcen im Free-Tier
+  processes = ["app"]                 # Standardprozess (kann entfallen, wenn keine anderen Rollen existieren)
+
+[[vm]]
+  memory = "1gb"                      # RAM-Größe (kann z. B. auf 512mb reduziert werden)
+  cpu_kind = "shared"                 # "shared" für Free-/Low-Tier, "performance" für mehr Power
+  cpus = 1                            # Anzahl vCPU (1 ist ausreichend für Dash)
