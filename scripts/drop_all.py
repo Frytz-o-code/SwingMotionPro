@@ -11,7 +11,7 @@ def drop_all():
         sys.exit(1)
 
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"])
+        conn = psycopg2.connect(os.environ["DATABASE_URL_DEV"])
         cur = conn.cursor()
         print("⚠️  Lösche alle Tabelleninhalte …")
         cur.execute("""

@@ -7,7 +7,7 @@ import io
 import psycopg2
 from flask import session
 import dash
-from config import DATABASE_URL
+from app.config import DATABASE_URL
 
 from app.db import get_current_user_id, get_db_connection
 from app.utils.csv_format_mappings import csv_format_registry
@@ -19,11 +19,15 @@ dash.register_page(__name__, path="/upload", name="CSV Upload", icon="tabler:upl
 def layout():
     if "user_id" not in session:
         return html.Div([
-            dmc.Alert("🔒 Zugriff verweigert – bitte zuerst einloggen.", color="red", title="Nicht eingeloggt")
+            dmc.Alert(
+                children="🔒 Zugriff verweigert – bitte zuerst einloggen.",
+                color="red",
+                title="Nicht eingeloggt"
+            )
         ])
     
     return dmc.Stack([
-        dmc.Title("📤 Golfdaten hochladen", order=2),
+        dmc.Title(children="📤 Golfdaten hochladen", order=2),
         dmc.Select(
             id="csv-format",
             label="CSV-Format wählen",
@@ -32,13 +36,12 @@ def layout():
         ),
         dcc.Upload(
             id="upload-data",
-            children=dmc.Button("CSV-Datei auswählen", leftIcon=dmc.ThemeIcon("tabler:upload", size=20)),
+            children=dmc.Button(children="CSV-Datei auswählen", leftIcon=dmc.ThemeIcon("tabler:upload", size=20)),
             multiple=False,
             accept=".csv"
         ),
         html.Div(id="upload-feedback")
     ])
-
 # Callback zur Verarbeitung des Uploads
 @callback(
     Output("upload-feedback", "children"),

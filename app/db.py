@@ -1,4 +1,4 @@
-from config import DATABASE_URL
+from app.config import DATABASE_URL
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor

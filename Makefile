@@ -19,9 +19,10 @@ dev: setup-env
 
 # 🌀 Fly.io Proxy starten für lokale DB-Verbindung
 proxy:
-	@echo "🌀 Starte Fly Proxy für lokale DB auf Port 5432..."
-	@nohup fly proxy 5432:5432 -a swingmotionpro-db > /dev/null 2>&1 &
+	@echo "🌀 Starte Fly Proxy für lokale DB auf Port 16380..."
+	@nohup flyctl mpg proxy --cluster nvwq9oz88no3kl1e -r fra -o friedrich-bauer &
 
+	
 # 🔐 .env automatisch erzeugen (aus GitHub Secrets via Codespace oder lokal)
 setup-env:
 	@echo "🔐 Erzeuge .env..."

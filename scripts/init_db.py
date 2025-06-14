@@ -1,5 +1,4 @@
 # scripts/init_db.py
-
 import os
 import psycopg2
 import sys
@@ -17,7 +16,7 @@ def init_db():
         sys.exit(1)
 
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"])
+        conn = psycopg2.connect(os.environ["DATABASE_URL_DEV"])
         cur = conn.cursor()
         print("🔄 Initialisiere Datenbank …")
         cur.execute(load_schema())

@@ -8,11 +8,15 @@ from app.auth import login_user
 
 dash.register_page(__name__, path="/login", name="Login")
 
-layout = dmc.Container([
-    dmc.Title("Login", order=2, mb="md"),
-    dmc.TextInput(id="login-email", label="E-Mail", required=True),
-    dmc.PasswordInput(id="login-password", label="Passwort", required=True, mt="sm"),
-    dmc.Button("Einloggen", id="login-button", mt="md"),
-    dcc.Location(id="login-redirect", refresh=True),
-    dmc.Text(id="login-message", c="red", mt="md")
-], size="xs", mt=50)
+layout = dmc.Container(
+    children=[
+        dmc.Title(children="Login", order=2, mb="md"),
+        dmc.TextInput(id="login-email", label="E-Mail", required=True),
+        dmc.PasswordInput(id="login-password", label="Passwort", required=True, mt="sm"),
+        dmc.Button(children="Einloggen", id="login-button", mt="md"),
+        dcc.Location(id="login-redirect", refresh=True),
+        dmc.Text(id="login-message", children="", c="red", mt="md")
+    ],
+    size="xs",
+    mt=50
+)

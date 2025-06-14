@@ -1,5 +1,5 @@
 # app/auth.py
-
+from app.config import DATABASE_URL
 import os
 import bcrypt
 from flask import session, redirect, url_for, request

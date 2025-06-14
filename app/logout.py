@@ -9,11 +9,10 @@ from app.auth import logout_user
 dash.register_page(__name__, path="/logout", name="Logout")
 
 layout = dmc.Container([
-    dmc.Title("Abmeldung", order=2, mb="md"),
-    dmc.Text("Du wirst nun abgemeldet..."),
+    dmc.Title(children="Abmeldung", order=2, mb="md"),
+    dmc.Text(children="Du wirst nun abgemeldet..."),
     dcc.Location(id="logout-redirect", refresh=True)
 ])
-
 from dash import callback
 
 @callback(

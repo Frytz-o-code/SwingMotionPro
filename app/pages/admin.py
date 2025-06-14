@@ -3,25 +3,26 @@
 import dash
 from dash import html, Output, Input, State, callback, ctx
 import dash_mantine_components as dmc
+from dash import MATCH, ALL
 from app.db import get_db_connection
 from app.auth import get_user_role
-from dash import MATCH, ALL
-from psycopg2 import sql
 
 dash.register_page(__name__, path="/admin", name="Adminbereich")
 
 # Layout mit Nutzertabelle
 def layout():
     if get_user_role() != "admin":
-        return dmc.Alert("Zugriff verweigert – nur für Admins.", color="red")
+        return dmc.Alert(
+            title="Nicht erlaubt",
+            children="Zugriff verweigert – nur für Admins.",
+            color="red"
+        )
 
     return dmc.Container([
-        dmc.Title("Benutzerverwaltung", order=2, mb="md"),
-        dmc.Button("Aktualisieren", id="admin-refresh", mb="md"),
+        dmc.Title(children="Benutzerverwaltung", order=2, mb="md"),
+        dmc.Button(children="Aktualisieren", id="admin-refresh", mb="md"),
         html.Div(id="user-table")
     ], size="md")
-
-layout = layout
 
 @callback(
     Output("user-table", "children"),
@@ -36,15 +37,15 @@ def refresh_users(n_clicks):
         user_id, email, role = user
         rows.append(
             dmc.Group([
-                dmc.Text(email, style={"width": "30%"}),
+                dmc.Text(children=email, w="30%"),
                 dmc.Select(
                     id={"type": "role-select", "index": user_id},
                     data=["admin", "coach", "player"],
                     value=role,
-                    style={"width": "150px"}
+                    w=150
                 ),
-                dmc.Button("Löschen", color="red", variant="light", id={"type": "delete-user", "index": user_id})
-            ], position="apart", mb="xs")
+                dmc.Button(children="Löschen", color="red", variant="light", id={"type": "delete-user", "index": user_id})
+            ], justify="space-between", mb="xs")
         )
 
     return rows
@@ -56,7 +57,7 @@ def refresh_users(n_clicks):
     prevent_initial_call="initial_duplicate"
 )
 def change_roles(new_roles, ids):
-    conn = get_connection()
+    conn = get_db_connection()
     with conn:
         with conn.cursor() as cur:
             for role, id_dict in zip(new_roles, ids):

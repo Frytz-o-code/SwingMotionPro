@@ -3,27 +3,41 @@
 import dash
 from dash import html, dcc, callback, Output, Input, State
 import dash_mantine_components as dmc
+from dash_iconify import DashIconify
 from flask import session
 from dash.exceptions import PreventUpdate
+import base64
+import pandas as pd
+import io
+
+from app.db import get_db_connection, get_current_user_id
 
 dash.register_page(__name__, path="/upload", name="Upload", icon="tabler:upload")
 
-layout = (
-    html.Div([
-        dmc.Alert("🔒 Zugriff verweigert – bitte zuerst einloggen.", color="red", title="Nicht eingeloggt")
-    ])
-    if "user_id" not in session else
-    dmc.Stack([
-        dmc.Title("📤 Golfdaten hochladen", order=2),
+# Layout als Funktion, damit session zur Laufzeit geprüft wird
+def layout():
+    if "user_id" not in session:
+        return html.Div([
+            dmc.Alert(
+                title="Nicht eingeloggt",
+                children="🔒 Zugriff verweigert – bitte zuerst einloggen.",
+                color="red"
+            )
+        ])
+
+    return dmc.Stack([
+        dmc.Title(children="📤 Golfdaten hochladen", order=2),
         dcc.Upload(
             id="upload-data",
-            children=dmc.Button("CSV-Datei auswählen", leftIcon=dmc.ThemeIcon("tabler:upload", size=20)),
+            children=dmc.Button(
+                children="CSV-Datei auswählen",
+                leftSection=DashIconify(icon="tabler:upload", width=20)
+            ),
             multiple=False,
             accept=".csv"
         ),
         html.Div(id="upload-feedback")
     ])
-)
 
 @callback(
     Output("upload-feedback", "children"),
@@ -33,21 +47,17 @@ layout = (
 )
 def handle_upload(contents, filename):
     if "user_id" not in session:
-        return dmc.Alert("🔒 Nicht eingeloggt – Upload nicht möglich.", color="red")
+        return dmc.Alert(title="🔒 Nicht eingeloggt – Upload nicht möglich.", color="red")
 
     if contents is None:
         raise PreventUpdate
 
     try:
-        # ⬇️ Base64-dekodieren und mit pandas einlesen
         content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
         df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
 
-        # ⬇️ Benutzer-ID abrufen
         user_id = get_current_user_id()
-
-        # ⬇️ Verbindung zur DB
         conn = get_db_connection()
         cur = conn.cursor()
 
@@ -77,6 +87,7 @@ def handle_upload(contents, filename):
             children=f"{filename} wurde gespeichert.",
             color="green"
         )
+
     except Exception as e:
         return dmc.Alert(
             title="❌ Fehler beim Upload",
