@@ -1,9 +1,7 @@
--- schema/schema.sql
-
--- Erweiterung für UUID & Zeit
+-- Enable UUID and timezone support
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Users mit Rolle
+-- Users table with roles
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     email TEXT NOT NULL UNIQUE,
@@ -11,25 +9,26 @@ CREATE TABLE IF NOT EXISTS users (
     role TEXT NOT NULL CHECK (role IN ('admin', 'coach', 'player')),
     created_at TIMESTAMPTZ DEFAULT now()
 );
--- Beispiel-Admin-Nutzer (Passwort: "admin123", gehasht mit bcrypt)
+
+-- Insert a sample admin user ("admin123" bcrypt-hashed)
 INSERT INTO users (email, password_hash, role)
 VALUES (
   'admin@example.com',
   '$2b$12$5WYpDfK2.2VZ0s4wZ3h13OuufYAFjlpXjYS2rSrBMnupvqhEtQjpS',  -- "admin123"
   'admin'
 )
-
 ON CONFLICT DO NOTHING;
 
--- Golf Sessions
+-- Golf shots with extra CSV-provided username
 CREATE TABLE IF NOT EXISTS golf_shots (
     id SERIAL PRIMARY KEY,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    datum TIMESTAMP,
-    schlaegerart TEXT,
+    csv_username TEXT,  -- Name wie in der CSV
+    shot_time TIMESTAMPTZ,
+    club_type TEXT,
     smash_factor DOUBLE PRECISION,
-    carry_distanz DOUBLE PRECISION,
-    gesamtstrecke DOUBLE PRECISION,
-    ballgeschwindigkeit DOUBLE PRECISION,
-    created_at TIMESTAMP DEFAULT now()
+    carry_distance DOUBLE PRECISION,
+    total_distance DOUBLE PRECISION,
+    ball_speed_kph DOUBLE PRECISION,
+    created_at TIMESTAMPTZ DEFAULT now()
 );

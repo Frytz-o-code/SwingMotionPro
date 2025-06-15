@@ -1,9 +1,11 @@
 # app/pages/admin.py
 
+import uuid
 import dash
-from dash import html, Output, Input, State, callback, ctx, no_update
+from dash import html, Output, Input, State, ctx, no_update, dcc, callback
 import dash_mantine_components as dmc
 from dash import ALL
+
 from app.db import get_db_connection, load_users
 from app.auth import get_user_role
 from app.utils.id_helpers import make_id_factory
@@ -14,20 +16,19 @@ make_id = make_id_factory("admin")
 
 dash.register_page(__name__, path="/admin", name="Adminbereich")
 
-# --- Layout mit Nutzertabelle ---
+# --- Admin-Zugriffsschutz & Layout ---
 def layout():
     if get_user_role() != "admin":
-        return dmc.Alert(
-            title="Nicht erlaubt",
-            children="Zugriff verweigert – nur für Admins.",
-            color="red"
-        )
+        return dcc.Location(href="/unauthorized", id="redirect-admin")
+    return admin_layout()
 
+def admin_layout():
     return dmc.Container([
         dmc.Title("Benutzerverwaltung", order=2, mb="md"),
         dmc.Button("Aktualisieren", id=make_id("refresh"), mb="md"),
         html.Div(id=make_id("table"))
     ], size="md")
+
 
 # --- Nutzerliste aktualisieren ---
 @callback(
@@ -48,10 +49,16 @@ def refresh_users(_=None):
                 value=role,
                 w=150
             ),
-            dmc.Button("Löschen", color="red", variant="light", id={"type": "delete-user", "index": user_id})
+            dmc.Button(
+                "Löschen", 
+                color="red", 
+                variant="light", 
+                id={"type": "delete-user", "index": user_id}
+            )
         ], justify="space-between", mb="xs")
         for user_id, email, role in users
     ]
+
 
 # --- Rollenänderung speichern ---
 @callback(
@@ -70,6 +77,7 @@ def change_roles(new_roles, ids):
                 cur.execute("UPDATE users SET role = %s WHERE id = %s", (role, user_id))
     return refresh_users()
 
+
 # --- Benutzer löschen ---
 @callback(
     Output(make_id("table"), "children", allow_duplicate=True),
@@ -79,13 +87,10 @@ def change_roles(new_roles, ids):
 )
 def delete_users(n_clicks_list, ids):
     if not ctx.triggered_id:
-        return dash.no_update
+        return no_update
 
     delete_id = ctx.triggered_id["index"]
-    logger.info(f"Triggered delete ID: {delete_id}")
 
-    # Validierung: Ist es wirklich eine UUID?
-    import uuid
     try:
         delete_id = str(uuid.UUID(delete_id))
     except ValueError:

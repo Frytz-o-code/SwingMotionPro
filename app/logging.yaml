@@ -30,5 +30,10 @@ loggers:
     propagate: no
 
 root:
-  level: INFO
+  level: DEBUG
   handlers: [console]
+
+app.pages.upload:
+    level: DEBUG
+    handlers: [console, file]
+    propagate: yes

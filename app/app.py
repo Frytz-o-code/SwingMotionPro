@@ -38,15 +38,21 @@ def create_nav_link(icon, label, href):
 def create_navbar():
     links = [
         create_nav_link("radix-icons:rocket", "Home", "/"),
-        dmc.Divider(label="Golf", style={"marginTop": 20, "marginBottom": 10}),
+        dmc.Divider(label="Seiten", style={"marginTop": 20, "marginBottom": 10}),
     ]
 
-    golf_pages = [
-        create_nav_link(page.get("icon", "mdi:golf"), page["name"], page["path"])
-        for page in dash.page_registry.values()
-        if page["path"].startswith("/golf")
+    # Alle registrierten Seiten außer Login/Logout/Admin
+    visible_pages = [
+        page for page in dash.page_registry.values()
+        if page["path"] not in ["/login", "/logout", "/admin"]
     ]
-    links.extend(golf_pages)
+
+    # Sortiere optional alphabetisch oder nach Wunsch
+    visible_pages.sort(key=lambda p: p["name"])
+
+    # Einträge erstellen
+    for page in visible_pages:
+        links.append(create_nav_link(page.get("icon", "mdi:golf"), page["name"], page["path"]))
 
     links.append(dmc.Divider(label="Benutzer", style={"marginTop": 20}))
 
@@ -59,7 +65,6 @@ def create_navbar():
         links.append(dmc.Anchor("Login", href="/login", c="blue"))
 
     return dmc.Stack(links, gap="xs", mt="lg")
-
 # --- Layout --- 
 
 def create_app_layout():
