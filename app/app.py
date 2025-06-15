@@ -1,5 +1,3 @@
-# app/app.py
-
 import os
 import dash
 from dash import callback, Output, Input, State, html, dcc
@@ -13,9 +11,7 @@ from app.utils.session_helpers import is_logged_in, current_user_role, current_u
 from app.auth import logout_user
 
 setup_logging()
-
 logger = logging.getLogger("app")
-
 logger.info("SwingMotionPro wird gestartet...")
 
 # --- Dash App Initialisierung ---
@@ -27,7 +23,6 @@ app = dash.Dash(
 )
 
 app.server.secret_key = os.getenv("SECRET_KEY", "dev-secret")
-
 app.title = "SwingMotionPro"
 server = app.server
 
@@ -46,9 +41,8 @@ def create_navbar():
         dmc.Divider(label="Golf", style={"marginTop": 20, "marginBottom": 10}),
     ]
 
-    # Dynamisch: alle Golf-Seiten
     golf_pages = [
-        create_nav_link(page["icon"], page["name"], page["path"])
+        create_nav_link(page.get("icon", "mdi:golf"), page["name"], page["path"])
         for page in dash.page_registry.values()
         if page["path"].startswith("/golf")
     ]
@@ -66,50 +60,78 @@ def create_navbar():
 
     return dmc.Stack(links, gap="xs", mt="lg")
 
-# --- Layout ---
+# --- Layout --- 
+
 def create_app_layout():
     return dmc.MantineProvider(
         theme={"colorScheme": "light"},
-        children=dmc.AppShell(
-            id="appshell",
-            padding="md",
-            withBorder=True,
-            children=[
-                dmc.AppShellHeader(
-                    dmc.Group(
-                        [
-                            dmc.Burger(id="burger", size="sm", hiddenFrom="sm", opened=False),
-                            dmc.Title("SwingMotionPro", order=2),
+        children=[
+            dmc.AppShell(
+                id="appshell",
+                padding="md",
+                withBorder=True,
+                children=[
+                    # Header mit Burger
+                    dmc.AppShellHeader(
+                        dmc.Group(
+                            [
+                                dmc.Burger(id="burger", size="sm", opened=False, hiddenFrom="sm"),
+                                dmc.Title("SwingMotionPro", order=2),
+                            ],
+                            h="100%", px="md", align="center", gap="md"
+                        )
+                    ),
+
+                    # Flexbox Layout: Sidebar + Main
+                    html.Div(
+                        id="navbar",
+                        children=[
+                            dmc.Text("NAVBAR DEBUG VISIBLE", c="red", fw=700),
+                            create_navbar()
                         ],
-                        h="100%", px="md", align="center", gap="md"
+                        style={
+                            "display": "block",  # <<< fix: sichtbar beim Start
+                            "width": "250px",
+                            "padding": "1rem",
+                            "backgroundColor": "#f8f9fa",
+                            "borderRight": "1px solid #ccc",
+                            "flexShrink": 0
+                        }
+                    ),
+                    html.Div(
+                        children=[
+                            dash.page_container,
+                            dmc.Center("© 2025 SwingMotionPro", style={"padding": "1rem", "fontSize": 12, "color": "#999"})
+                        ],
+                        style={"flexGrow": 1, "paddingLeft": "2rem"}
                     )
-                ),
-                dmc.AppShellNavbar(
-                    id="navbar",
-                    children=[create_navbar()],
-                    p="md",
-                    style={"display": "block"},  # initial sichtbar – bei Bedarf über Callback steuerbar
-                ),
-                dmc.AppShellMain(
-                    [
-                        dash.page_container,
-                        dmc.Center("© 2025 SwingMotionPro", style={"padding": "1rem", "fontSize": 12, "color": "#999"})
-                    ]
-                ),
-            ]
-        )
+                ],
+                style={"display": "flex", "flexDirection": "row"}
+            )
+        ]
     )
 
-app.layout = create_app_layout  # wichtig: keine Klammern!
+app.layout = create_app_layout  # ohne Klammern!
 
-# --- Burger Callback ---
+# --- Burger Callback: Sidebar anzeigen/ausblenden ---
+# Callback – bleibt gleich
 @callback(
-    Output("navbar", "hidden"),
-    Input("burger", "opened"),
+    Output("navbar", "style"),
+    Input("burger", "n_clicks"),
+    State("navbar", "style"),
     prevent_initial_call=True
 )
-def toggle_navbar_visibility(opened):
-    return not opened  # hidden=True wenn opened=False
+def toggle_navbar(n_clicks, current_style):
+    current = current_style.get("display", "none") if current_style else "none"
+    base = {
+        "width": "250px",
+        "padding": "1rem",
+        "backgroundColor": "#f8f9fa",
+        "borderRight": "1px solid #ccc",
+        "flexShrink": 0
+    }
+    return {**base, "display": "none"} if current == "block" else {**base, "display": "block"}
+
 
 # --- App-Start ---
 if __name__ == "__main__":

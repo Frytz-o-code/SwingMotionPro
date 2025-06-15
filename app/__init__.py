@@ -1,10 +1,9 @@
-# app/__init__.py
-
 import os
 from flask import Flask
 import dash
 from dash import dcc, html
 from flask_session import Session
+import dash_mantine_components as dmc
 
 # Dash-Factory-Funktion
 def create_dash_app():
@@ -23,13 +22,15 @@ def create_dash_app():
         server=server,
         suppress_callback_exceptions=True,
         use_pages=True,  # für Multipage
-        external_stylesheets=["https://unpkg.com/@mantine/ds@latest/styles.css"]
+        external_stylesheets=dmc.styles.ALL  # Mantine-Styles korrekt einbinden
     )
 
     # Navigation + Seiten
-    app.layout = html.Div([
-        dcc.Location(id="url"),
-        dash.page_container
-    ])
+    app.layout = dmc.MantineProvider(
+        children=[
+            dcc.Location(id="url"),
+            dash.page_container
+        ]
+    )
 
-    return app
+    return
