@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "swingmotionpro"
 version = "0.1.0"
@@ -15,6 +19,10 @@ dependencies = [
     "dash-mantine-components>=2.0.0",
     "dash-iconify>=0.1.2",
     "bcrypt>=4.3.0",
-    "psycopg2>=2.9.10",
     "dotenv>=0.9.9",
+    "logging>=0.4.9.6",
+    "pyyaml>=6.0.2",
 ]
+
+[tool.setuptools]
+packages = ["app"]

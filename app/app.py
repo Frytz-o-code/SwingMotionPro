@@ -1,5 +1,7 @@
 # app/app.py
-
+from app.logging_config import setup_logging
+setup_logging()
+import os
 import dash
 from dash import callback, Output, Input, State, html, dcc
 import dash_mantine_components as dmc
@@ -9,6 +11,12 @@ from flask import session
 from app.utils.session_helpers import is_logged_in, current_user_role, current_user_email
 from app.auth import logout_user
 
+
+import logging
+logger = logging.getLogger("app")
+
+logger.info("SwingMotionPro wird gestartet...")
+
 # --- Dash App Initialisierung ---
 app = dash.Dash(
     __name__,
@@ -16,6 +24,9 @@ app = dash.Dash(
     external_stylesheets=dmc.styles.ALL,
     suppress_callback_exceptions=True,
 )
+
+app.server.secret_key = os.getenv("SECRET_KEY", "dev-secret")
+
 app.title = "SwingMotionPro"
 server = app.server
 

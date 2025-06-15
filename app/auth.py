@@ -4,6 +4,9 @@ import os
 import bcrypt
 from flask import session, redirect, url_for, request
 from .db import get_db_connection
+from app.logging_config import get_logger
+logger = get_logger(__name__)  # ergibt z. B. "app.pages.upload"
+
 
 # Passwort-Hashing
 def hash_password(password: str) -> str:
@@ -31,6 +34,7 @@ def get_user_role():
 # Login durchführen
 def login_user(email: str, password: str) -> bool:
     user = get_user_by_email(email)
+    logger.debug(user["password_hash"])
     if user and check_password(password, user["password_hash"]):
         session["user_id"] = str(user["id"])
         session["user_email"] = user["email"]

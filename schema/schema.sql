@@ -15,9 +15,10 @@ CREATE TABLE IF NOT EXISTS users (
 INSERT INTO users (email, password_hash, role)
 VALUES (
   'admin@example.com',
-  '$2b$12$Tn9s7ZCHN0YKORqvMoKj8eL3DJ3Ik9kDkJht4ElWZ.cDKM0yLGSKK', -- "admin123"
+  '$2b$12$5WYpDfK2.2VZ0s4wZ3h13OuufYAFjlpXjYS2rSrBMnupvqhEtQjpS',  -- "admin123"
   'admin'
 )
+
 ON CONFLICT DO NOTHING;
 
 -- Golf Sessions

@@ -59,3 +59,11 @@ Error: listen tcp 127.0.0.1:16380: bind: address already in use
 Error: listen tcp 127.0.0.1:16380: bind: address already in use
 [2mINFO[0m Proxying postgres to port "16380" with user "pgdb-nvwq9oz88no3kl1e" password "FwogoVHNuAN1DG1USDxSFoE2"
 Proxying local port 16380 to remote [fdaa:1c:15a1:0:1::2]:5432
+[2mINFO[0m Proxying postgres to port "16380" with user "pgdb-nvwq9oz88no3kl1e" password "FwogoVHNuAN1DG1USDxSFoE2"
+Proxying local port 16380 to remote [fdaa:1c:15a1:0:1::2]:5432
+[2mINFO[0m Proxying postgres to port "16380" with user "pgdb-nvwq9oz88no3kl1e" password "FwogoVHNuAN1DG1USDxSFoE2"
+Proxying local port 16380 to remote [fdaa:1c:15a1:0:1::2]:5432
+[2mINFO[0m Proxying postgres to port "16380" with user "pgdb-nvwq9oz88no3kl1e" password "FwogoVHNuAN1DG1USDxSFoE2"
+Proxying local port 16380 to remote [fdaa:1c:15a1:0:1::2]:5432
+[2mINFO[0m Proxying postgres to port "16380" with user "pgdb-nvwq9oz88no3kl1e" password "FwogoVHNuAN1DG1USDxSFoE2"
+Error: listen tcp 127.0.0.1:16380: bind: address already in use

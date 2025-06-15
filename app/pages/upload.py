@@ -1,5 +1,3 @@
-# pages/upload.py
-
 import dash
 from dash import html, dcc, callback, Output, Input, State
 import dash_mantine_components as dmc
@@ -11,10 +9,12 @@ import pandas as pd
 import io
 
 from app.db import get_db_connection, get_current_user_id
+from app.utils.id_helpers import make_id_factory  # ID-Generator importieren
 
 dash.register_page(__name__, path="/upload", name="Upload", icon="tabler:upload")
+make_id = make_id_factory(__name__)  # e.g. "pages-upload"
 
-# Layout als Funktion, damit session zur Laufzeit geprüft wird
+# Layout als Funktion, damit Session geprüft wird
 def layout():
     if "user_id" not in session:
         return html.Div([
@@ -26,23 +26,23 @@ def layout():
         ])
 
     return dmc.Stack([
-        dmc.Title(children="📤 Golfdaten hochladen", order=2),
+        dmc.Title("📤 Golfdaten hochladen", order=2),
         dcc.Upload(
-            id="upload-data",
+            id=make_id("upload-data"),
             children=dmc.Button(
-                children="CSV-Datei auswählen",
+                "CSV-Datei auswählen",
                 leftSection=DashIconify(icon="tabler:upload", width=20)
             ),
             multiple=False,
             accept=".csv"
         ),
-        html.Div(id="upload-feedback")
+        html.Div(id=make_id("upload-feedback"))
     ])
 
 @callback(
-    Output("upload-feedback", "children"),
-    Input("upload-data", "contents"),
-    State("upload-data", "filename"),
+    Output(make_id("upload-feedback"), "children"),
+    Input(make_id("upload-data"), "contents"),
+    State(make_id("upload-data"), "filename"),
     prevent_initial_call=True
 )
 def handle_upload(contents, filename):
