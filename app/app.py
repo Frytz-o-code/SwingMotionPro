@@ -1,18 +1,19 @@
 # app/app.py
-from app.logging_config import setup_logging
-setup_logging()
+
 import os
 import dash
 from dash import callback, Output, Input, State, html, dcc
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 from flask import session
+import logging
 
+from app.logging_config import setup_logging
 from app.utils.session_helpers import is_logged_in, current_user_role, current_user_email
 from app.auth import logout_user
 
+setup_logging()
 
-import logging
 logger = logging.getLogger("app")
 
 logger.info("SwingMotionPro wird gestartet...")
@@ -68,46 +69,47 @@ def create_navbar():
 # --- Layout ---
 def create_app_layout():
     return dmc.MantineProvider(
-    theme={"colorScheme": "light"},
-    children=dmc.AppShell(
-        id="appshell",
-        padding="md",
-        withBorder=True,
-        children=[
-            dmc.AppShellHeader(
-                dmc.Group(
+        theme={"colorScheme": "light"},
+        children=dmc.AppShell(
+            id="appshell",
+            padding="md",
+            withBorder=True,
+            children=[
+                dmc.AppShellHeader(
+                    dmc.Group(
+                        [
+                            dmc.Burger(id="burger", size="sm", hiddenFrom="sm", opened=False),
+                            dmc.Title("SwingMotionPro", order=2),
+                        ],
+                        h="100%", px="md", align="center", gap="md"
+                    )
+                ),
+                dmc.AppShellNavbar(
+                    id="navbar",
+                    children=[create_navbar()],
+                    p="md",
+                    style={"display": "block"},  # initial sichtbar – bei Bedarf über Callback steuerbar
+                ),
+                dmc.AppShellMain(
                     [
-                        dmc.Burger(id="burger", size="sm", hiddenFrom="sm", opened=False),
-                        dmc.Title("SwingMotionPro", order=2),
-                    ],
-                    h="100%", px="md", align="center", gap="md"
-                )
-            ),
-            dmc.AppShellNavbar(
-                id="navbar",
-                children=create_navbar(),
-                p="md"
-            ),
-            dmc.AppShellMain(
-                [
-                    dash.page_container,
-                    dmc.Center("© 2025 SwingMotionPro", style={"padding": "1rem", "fontSize": 12, "color": "#999"})
-                ]
-            )
-        ]
+                        dash.page_container,
+                        dmc.Center("© 2025 SwingMotionPro", style={"padding": "1rem", "fontSize": 12, "color": "#999"})
+                    ]
+                ),
+            ]
+        )
     )
-)
 
 app.layout = create_app_layout  # wichtig: keine Klammern!
 
 # --- Burger Callback ---
 @callback(
-    Output("burger", "opened"),
+    Output("navbar", "hidden"),
     Input("burger", "opened"),
     prevent_initial_call=True
 )
-def toggle_navbar(opened):
-    return not opened
+def toggle_navbar_visibility(opened):
+    return not opened  # hidden=True wenn opened=False
 
 # --- App-Start ---
 if __name__ == "__main__":
